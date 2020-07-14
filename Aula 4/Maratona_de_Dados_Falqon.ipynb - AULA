@@ -1,0 +1,2007 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Maratona de Dados Falqon.ipynb",
+      "provenance": [],
+      "collapsed_sections": [],
+      "toc_visible": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cNWFbGUa7qqv",
+        "colab_type": "text"
+      },
+      "source": [
+        "# **Maratona de Dados Falqon - Machine Learning**\n",
+        "\n",
+        "\n",
+        "---\n",
+        "\n",
+        "> ## *Forecasting Google*\n",
+        "\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "lVEQkpS87xYW",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dependências\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3virXL185feq",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 102
+        },
+        "outputId": "faf20633-9230-4913-c29b-d6252995e8bf"
+      },
+      "source": [
+        "!pip install sklearn"
+      ],
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Requirement already satisfied: sklearn in /usr/local/lib/python3.6/dist-packages (0.0)\n",
+            "Requirement already satisfied: scikit-learn in /usr/local/lib/python3.6/dist-packages (from sklearn) (0.22.2.post1)\n",
+            "Requirement already satisfied: numpy>=1.11.0 in /usr/local/lib/python3.6/dist-packages (from scikit-learn->sklearn) (1.18.5)\n",
+            "Requirement already satisfied: joblib>=0.11 in /usr/local/lib/python3.6/dist-packages (from scikit-learn->sklearn) (0.15.1)\n",
+            "Requirement already satisfied: scipy>=0.17.0 in /usr/local/lib/python3.6/dist-packages (from scikit-learn->sklearn) (1.4.1)\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GAbgTkr-75lZ",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Bibliotecas\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "lSi2Fm7UCNQz",
+        "colab_type": "text"
+      },
+      "source": [
+        "Math:\n",
+        ">https://docs.python.org/3/library/math.html\n",
+        "\n",
+        "NumPy:\n",
+        ">https://numpy.org/doc/stable/index.html\n",
+        "\n",
+        "Pandas:\n",
+        ">https://pandas.pydata.org/"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ATEb3mMj6nQZ",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import math\n",
+        "import numpy as np\n",
+        "import pandas as pd\n"
+      ],
+      "execution_count": 5,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "az1pFWvwHU3k",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Tratando os Dados\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "R317h8C-8Crr",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dados utilizados\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "VDge1SWK5TSx",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df = pd.read_csv(\"GOOGL.csv\", sep=';', index_col='Date', parse_dates=True)"
+      ],
+      "execution_count": 8,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Z1F8FI-n_po1",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df = df[['Adj. Open', 'Adj. High','Adj. Low','Adj. Close', 'Adj. Volume']]"
+      ],
+      "execution_count": 10,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KjwCJ9ip_t39",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 119
+        },
+        "outputId": "8be11b09-1c92-401f-d952-5d738acef9d1"
+      },
+      "source": [
+        "df['HL_PCT'] = (df['Adj. High'] - df['Adj. Low'])/ df['Adj. Close'] * 100.0"
+      ],
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/ipykernel_launcher.py:1: SettingWithCopyWarning: \n",
+            "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+            "Try using .loc[row_indexer,col_indexer] = value instead\n",
+            "\n",
+            "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+            "  \"\"\"Entry point for launching an IPython kernel.\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "DejlT7pC_qWV",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 119
+        },
+        "outputId": "abdffa4e-5cc0-4f82-c083-737083f53344"
+      },
+      "source": [
+        "df['PCT_change'] = (df['Adj. Close'] - df['Adj. Open'])/ df['Adj. Open'] * 100.0"
+      ],
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/ipykernel_launcher.py:1: SettingWithCopyWarning: \n",
+            "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+            "Try using .loc[row_indexer,col_indexer] = value instead\n",
+            "\n",
+            "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+            "  \"\"\"Entry point for launching an IPython kernel.\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "J7l3RSNeATdB",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 235
+        },
+        "outputId": "4b0b2e0f-86cd-4d02-cde7-bc8c641bb356"
+      },
+      "source": [
+        "df.head()"
+      ],
+      "execution_count": 21,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>Adj. Open</th>\n",
+              "      <th>Adj. High</th>\n",
+              "      <th>Adj. Low</th>\n",
+              "      <th>Adj. Close</th>\n",
+              "      <th>Adj. Volume</th>\n",
+              "      <th>HL_PCT</th>\n",
+              "      <th>PCT_change</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Date</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2004-08-19</th>\n",
+              "      <td>50.159839</td>\n",
+              "      <td>52.191109</td>\n",
+              "      <td>48.128568</td>\n",
+              "      <td>50.322842</td>\n",
+              "      <td>44659000.0</td>\n",
+              "      <td>8.072956</td>\n",
+              "      <td>0.324968</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-20</th>\n",
+              "      <td>50.661387</td>\n",
+              "      <td>54.708881</td>\n",
+              "      <td>50.405597</td>\n",
+              "      <td>54.322689</td>\n",
+              "      <td>22834300.0</td>\n",
+              "      <td>7.921706</td>\n",
+              "      <td>7.227007</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-23</th>\n",
+              "      <td>55.551482</td>\n",
+              "      <td>56.915693</td>\n",
+              "      <td>54.693835</td>\n",
+              "      <td>54.869377</td>\n",
+              "      <td>18256100.0</td>\n",
+              "      <td>4.049360</td>\n",
+              "      <td>-1.227880</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-24</th>\n",
+              "      <td>55.792225</td>\n",
+              "      <td>55.972783</td>\n",
+              "      <td>51.945350</td>\n",
+              "      <td>52.597363</td>\n",
+              "      <td>15247300.0</td>\n",
+              "      <td>7.657099</td>\n",
+              "      <td>-5.726357</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-25</th>\n",
+              "      <td>52.542193</td>\n",
+              "      <td>54.167209</td>\n",
+              "      <td>52.100830</td>\n",
+              "      <td>53.164113</td>\n",
+              "      <td>9188600.0</td>\n",
+              "      <td>3.886792</td>\n",
+              "      <td>1.183658</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "            Adj. Open  Adj. High   Adj. Low  ...  Adj. Volume    HL_PCT  PCT_change\n",
+              "Date                                         ...                                   \n",
+              "2004-08-19  50.159839  52.191109  48.128568  ...   44659000.0  8.072956    0.324968\n",
+              "2004-08-20  50.661387  54.708881  50.405597  ...   22834300.0  7.921706    7.227007\n",
+              "2004-08-23  55.551482  56.915693  54.693835  ...   18256100.0  4.049360   -1.227880\n",
+              "2004-08-24  55.792225  55.972783  51.945350  ...   15247300.0  7.657099   -5.726357\n",
+              "2004-08-25  52.542193  54.167209  52.100830  ...    9188600.0  3.886792    1.183658\n",
+              "\n",
+              "[5 rows x 7 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 21
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_68crOHXActs",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 235
+        },
+        "outputId": "7eadc005-2ecd-469b-ac9b-05e66588da8d"
+      },
+      "source": [
+        "df = df[['HL_PCT','PCT_change','Adj. Close', 'Adj. Volume']]\n",
+        "df.head()"
+      ],
+      "execution_count": 22,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>HL_PCT</th>\n",
+              "      <th>PCT_change</th>\n",
+              "      <th>Adj. Close</th>\n",
+              "      <th>Adj. Volume</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Date</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2004-08-19</th>\n",
+              "      <td>8.072956</td>\n",
+              "      <td>0.324968</td>\n",
+              "      <td>50.322842</td>\n",
+              "      <td>44659000.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-20</th>\n",
+              "      <td>7.921706</td>\n",
+              "      <td>7.227007</td>\n",
+              "      <td>54.322689</td>\n",
+              "      <td>22834300.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-23</th>\n",
+              "      <td>4.049360</td>\n",
+              "      <td>-1.227880</td>\n",
+              "      <td>54.869377</td>\n",
+              "      <td>18256100.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-24</th>\n",
+              "      <td>7.657099</td>\n",
+              "      <td>-5.726357</td>\n",
+              "      <td>52.597363</td>\n",
+              "      <td>15247300.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-25</th>\n",
+              "      <td>3.886792</td>\n",
+              "      <td>1.183658</td>\n",
+              "      <td>53.164113</td>\n",
+              "      <td>9188600.0</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "              HL_PCT  PCT_change  Adj. Close  Adj. Volume\n",
+              "Date                                                     \n",
+              "2004-08-19  8.072956    0.324968   50.322842   44659000.0\n",
+              "2004-08-20  7.921706    7.227007   54.322689   22834300.0\n",
+              "2004-08-23  4.049360   -1.227880   54.869377   18256100.0\n",
+              "2004-08-24  7.657099   -5.726357   52.597363   15247300.0\n",
+              "2004-08-25  3.886792    1.183658   53.164113    9188600.0"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 22
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "zA0ML1HSBPG-",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 35
+        },
+        "outputId": "a7031cf7-4d06-4318-9f91-41679f266810"
+      },
+      "source": [
+        "forecast_col = 'Adj. Close'\n",
+        "forecast_col"
+      ],
+      "execution_count": 23,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "application/vnd.google.colaboratory.intrinsic": {
+              "type": "string"
+            },
+            "text/plain": [
+              "'Adj. Close'"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 23
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "IP2i33kqGNg5",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 204
+        },
+        "outputId": "4035a836-905e-4e00-af20-f2e9b7c08815"
+      },
+      "source": [
+        "df.info()"
+      ],
+      "execution_count": 24,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "<class 'pandas.core.frame.DataFrame'>\n",
+            "DatetimeIndex: 3424 entries, 2004-08-19 to 2018-03-27\n",
+            "Data columns (total 4 columns):\n",
+            " #   Column       Non-Null Count  Dtype  \n",
+            "---  ------       --------------  -----  \n",
+            " 0   HL_PCT       3424 non-null   float64\n",
+            " 1   PCT_change   3424 non-null   float64\n",
+            " 2   Adj. Close   3424 non-null   float64\n",
+            " 3   Adj. Volume  3424 non-null   float64\n",
+            "dtypes: float64(4)\n",
+            "memory usage: 133.8 KB\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "yJVFTP4wiLjS",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df.fillna(value=-99999, inplace=True)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "N48aM3XCipFk",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "b3f9063a-8a7d-49ae-9f3a-e8d01c1c2e79"
+      },
+      "source": [
+        "forecast_out = int(math.ceil(0.01 * len(df)))\n",
+        "forecast_out"
+      ],
+      "execution_count": 26,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "35"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 26
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sCxZF_HjjJqJ",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 119
+        },
+        "outputId": "320bc004-197c-4a3b-fbc5-84a8b3c19519"
+      },
+      "source": [
+        "df['label'] = df[forecast_col].shift(-forecast_out)"
+      ],
+      "execution_count": 29,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/ipykernel_launcher.py:1: SettingWithCopyWarning: \n",
+            "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+            "Try using .loc[row_indexer,col_indexer] = value instead\n",
+            "\n",
+            "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+            "  \"\"\"Entry point for launching an IPython kernel.\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "hsXAeV_bjkY5",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 235
+        },
+        "outputId": "4719f8ac-1942-4a5a-e517-62e351e333e3"
+      },
+      "source": [
+        "df.head()"
+      ],
+      "execution_count": 33,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>HL_PCT</th>\n",
+              "      <th>PCT_change</th>\n",
+              "      <th>Adj. Close</th>\n",
+              "      <th>Adj. Volume</th>\n",
+              "      <th>label</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Date</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2004-08-19</th>\n",
+              "      <td>8.072956</td>\n",
+              "      <td>0.324968</td>\n",
+              "      <td>50.322842</td>\n",
+              "      <td>44659000.0</td>\n",
+              "      <td>69.078238</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-20</th>\n",
+              "      <td>7.921706</td>\n",
+              "      <td>7.227007</td>\n",
+              "      <td>54.322689</td>\n",
+              "      <td>22834300.0</td>\n",
+              "      <td>67.839414</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-23</th>\n",
+              "      <td>4.049360</td>\n",
+              "      <td>-1.227880</td>\n",
+              "      <td>54.869377</td>\n",
+              "      <td>18256100.0</td>\n",
+              "      <td>68.912727</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-24</th>\n",
+              "      <td>7.657099</td>\n",
+              "      <td>-5.726357</td>\n",
+              "      <td>52.597363</td>\n",
+              "      <td>15247300.0</td>\n",
+              "      <td>70.668146</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-25</th>\n",
+              "      <td>3.886792</td>\n",
+              "      <td>1.183658</td>\n",
+              "      <td>53.164113</td>\n",
+              "      <td>9188600.0</td>\n",
+              "      <td>71.219849</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "              HL_PCT  PCT_change  Adj. Close  Adj. Volume      label\n",
+              "Date                                                                \n",
+              "2004-08-19  8.072956    0.324968   50.322842   44659000.0  69.078238\n",
+              "2004-08-20  7.921706    7.227007   54.322689   22834300.0  67.839414\n",
+              "2004-08-23  4.049360   -1.227880   54.869377   18256100.0  68.912727\n",
+              "2004-08-24  7.657099   -5.726357   52.597363   15247300.0  70.668146\n",
+              "2004-08-25  3.886792    1.183658   53.164113    9188600.0  71.219849"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 33
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "o1v7p65X52yt",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Treinamento"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "v7H16CJs-9lE",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dependências\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "e-lSwA4DAbjx",
+        "colab_type": "text"
+      },
+      "source": [
+        "A scikit-learn é uma biblioteca de ML para Python. Ela inclui vários algoritmos de classificação, regressão e agrupamento incluindo máquinas de vetores de suporte, florestas aleatórias, gradient boosting, k-means e DBSCAN, e é projetada para interagir com as bibliotecas NumPy e SciPy.\n",
+        "\n",
+        "\n",
+        "Model selection:\n",
+        "> https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html\n",
+        "\n",
+        "SVR:\n",
+        "> https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n",
+        "\n",
+        "Linear Regression:\n",
+        "\n",
+        "\n",
+        "> https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "jWD7F5kT-6QI",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from sklearn import model_selection, svm\n",
+        "from sklearn.linear_model import LinearRegression"
+      ],
+      "execution_count": 34,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "n0jo4sGCL61r",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Preparando pra testes e treinamento"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "I-qd3RP-gpL7",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 238
+        },
+        "outputId": "841f794b-6a46-4657-8750-aadbbc3ddada"
+      },
+      "source": [
+        "X= np.array(df.drop(['label'],1))\n",
+        "X"
+      ],
+      "execution_count": 35,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 8.07295560e+00,  3.24967503e-01,  5.03228418e+01,\n",
+              "         4.46590000e+07],\n",
+              "       [ 7.92170621e+00,  7.22700723e+00,  5.43226889e+01,\n",
+              "         2.28343000e+07],\n",
+              "       [ 4.04936015e+00, -1.22788010e+00,  5.48693765e+01,\n",
+              "         1.82561000e+07],\n",
+              "       ...,\n",
+              "       [ 4.08260679e+00, -2.36072933e+00,  1.02655000e+03,\n",
+              "         2.41351700e+06],\n",
+              "       [ 4.61915017e+00,  3.32191129e-01,  1.05409000e+03,\n",
+              "         3.27240900e+06],\n",
+              "       [ 6.64587761e+00, -5.35388664e+00,  1.00694000e+03,\n",
+              "         2.94095700e+06]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 35
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "wwd5U91Ngx8j",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "X_lately = X[-forecast_out:]\n",
+        "X_lately"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Ad9f7A5Jg6Cy",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 238
+        },
+        "outputId": "265937b1-d856-4f15-baea-2be5e1ce3689"
+      },
+      "source": [
+        "X= X[:- forecast_out]\n",
+        "X"
+      ],
+      "execution_count": 37,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 8.07295560e+00,  3.24967503e-01,  5.03228418e+01,\n",
+              "         4.46590000e+07],\n",
+              "       [ 7.92170621e+00,  7.22700723e+00,  5.43226889e+01,\n",
+              "         2.28343000e+07],\n",
+              "       [ 4.04936015e+00, -1.22788010e+00,  5.48693765e+01,\n",
+              "         1.82561000e+07],\n",
+              "       ...,\n",
+              "       [ 1.53098791e+00,  4.76194525e-01,  1.18159000e+03,\n",
+              "         2.77496700e+06],\n",
+              "       [ 1.79860615e+00, -7.29098295e-01,  1.11920000e+03,\n",
+              "         5.79888000e+06],\n",
+              "       [ 5.45024140e+00, -2.89384977e+00,  1.06876000e+03,\n",
+              "         3.74246900e+06]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 37
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "846OIkxBGP2R",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 102
+        },
+        "outputId": "28ae2ae7-5883-4802-a80c-a352c276f415"
+      },
+      "source": [
+        "df.dropna(inplace=True)"
+      ],
+      "execution_count": 39,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/ipykernel_launcher.py:1: SettingWithCopyWarning: \n",
+            "A value is trying to be set on a copy of a slice from a DataFrame\n",
+            "\n",
+            "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+            "  \"\"\"Entry point for launching an IPython kernel.\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "WQcZNYP5MBUR",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "abb14f4a-2164-41e4-ca63-602c9df7f52b"
+      },
+      "source": [
+        "y = np.array(df['label'])\n",
+        "y"
+      ],
+      "execution_count": 41,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([  69.0782379 ,   67.83941377,   68.91272699, ..., 1026.55      ,\n",
+              "       1054.09      , 1006.94      ])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 41
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Wah3kgSFMLRV",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.2)"
+      ],
+      "execution_count": 42,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "gnkQn4BUnR9E",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 238
+        },
+        "outputId": "96308ef8-1766-413b-8e70-757244049bb7"
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": 43,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 2.73327182e+00,  2.50214961e+00,  3.58737388e+02,\n",
+              "         9.80810000e+06],\n",
+              "       [ 6.98895028e-01, -4.30753598e-02,  4.53901149e+02,\n",
+              "         2.61670000e+06],\n",
+              "       [ 1.94424376e+00, -1.07829743e+00,  2.36038629e+02,\n",
+              "         7.75740000e+06],\n",
+              "       ...,\n",
+              "       [ 1.74770095e+00,  1.14982128e+00,  2.35607297e+02,\n",
+              "         1.81760000e+07],\n",
+              "       [ 2.17852566e+00,  1.00793617e+00,  2.38741974e+02,\n",
+              "         1.13296000e+07],\n",
+              "       [ 2.53805138e+00,  1.09177153e+00,  2.58673500e+02,\n",
+              "         1.17386000e+07]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 43
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Gte6wQ9QQqf-",
+        "colab_type": "text"
+      },
+      "source": [
+        "## SVR"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "gq7a1hztOyDM",
+        "colab_type": "text"
+      },
+      "source": [
+        "Definimos o algoritmo"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "cgJDRIsUMSWN",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "951d9ca2-1ba5-45fa-dc2a-237ef7b0039b"
+      },
+      "source": [
+        "clf = svm.SVR()\n",
+        "clf"
+      ],
+      "execution_count": 44,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='scale',\n",
+              "    kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 44
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7aWSXp2-O2YI",
+        "colab_type": "text"
+      },
+      "source": [
+        "Treinamos o mesmo"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "VOpDex9COJsb",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "32054759-2692-498b-974b-cb3da8daee48"
+      },
+      "source": [
+        "clf.fit(X_train, y_train)"
+      ],
+      "execution_count": 45,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='scale',\n",
+              "    kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 45
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "11EJMRmQQtBx",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Linear Regression"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "DGPEHE0ZQ5cj",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "4523b2d0-c23f-45fc-f741-52bc144bee0e"
+      },
+      "source": [
+        "clf2 = LinearRegression()\n",
+        "clf2"
+      ],
+      "execution_count": 46,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "LinearRegression(copy_X=True, fit_intercept=True, n_jobs=None, normalize=False)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 46
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mxELbhgtQ98M",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "7eee8696-dad7-414b-b7ea-c394129651d8"
+      },
+      "source": [
+        "clf2.fit(X_train, y_train)"
+      ],
+      "execution_count": 47,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "LinearRegression(copy_X=True, fit_intercept=True, n_jobs=None, normalize=False)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 47
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Ix7WlL7L6HN3",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Testando"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "XoAYsZjo7B5t",
+        "colab_type": "text"
+      },
+      "source": [
+        "## SVR"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mrIVOXR-O8zf",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "1110b4cb-3205-446d-a847-f6265900076e"
+      },
+      "source": [
+        "accuracy_SVR= clf.score(X_test, y_test)\n",
+        "accuracy_SVR"
+      ],
+      "execution_count": 49,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0.4705726576737327"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 49
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "EL7WzBkh7GkS",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Linear Regression"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "vpOB3tkBQ448",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "7657d789-55e7-4b2e-d054-024621e47b60"
+      },
+      "source": [
+        "accuracy_LR= clf2.score(X_test, y_test)\n",
+        "accuracy_LR"
+      ],
+      "execution_count": 50,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0.9792070467541263"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 50
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "4E7iAVZgP96h",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Cj6LuWXHiNx4",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Predict"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "bgD29ZKMiRRq",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 170
+        },
+        "outputId": "26b7b8b8-3e79-42da-a467-feb09457cf4f"
+      },
+      "source": [
+        "predicao_set = clf2.predict(X_lately)\n",
+        "predicao_set"
+      ],
+      "execution_count": 51,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([1100.56398315, 1072.65715774, 1019.17851474, 1058.49221997,\n",
+              "       1073.15401112, 1073.77268071, 1091.57336992, 1110.26119065,\n",
+              "       1115.17374793, 1122.77510854, 1132.6221222 , 1129.4730535 ,\n",
+              "       1148.14865178, 1164.33393073, 1136.0832824 , 1122.56582927,\n",
+              "       1087.59616292, 1102.1199787 , 1113.78310633, 1121.35020354,\n",
+              "       1134.55275302, 1149.91881908, 1180.60893214, 1186.0805734 ,\n",
+              "       1157.33529084, 1169.05366126, 1170.13868598, 1153.223239  ,\n",
+              "       1117.95197087, 1114.60061791, 1113.23498129, 1069.88439533,\n",
+              "       1042.64087361, 1070.03834518, 1019.7891499 ])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 51
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "404tqJDHilKG",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Exibindo dados"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "aMlcqg-dlrg8",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dependências"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "MT6AAFnoiwJe",
+        "colab_type": "text"
+      },
+      "source": [
+        "Matplotlib é uma biblioteca de plotagem para a linguagem de programação Python e sua extensão numérica de matemática NumPy\n",
+        "\n",
+        "\n",
+        "> https://matplotlib.org/api/_as_gen/matplotlib.pyplot.html?highlight=pyplot#module-matplotlib.pyplot\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "u0kEBxL2jNCS",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import datetime\n",
+        "import matplotlib.pyplot as plt\n",
+        "from matplotlib import style"
+      ],
+      "execution_count": 52,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "HgG1A5H4ksDR",
+        "colab_type": "text"
+      },
+      "source": [
+        "Estilos de plotagem: \n",
+        "\n",
+        "> https://matplotlib.org/3.1.1/gallery/style_sheets/style_sheets_reference.html\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "kNbgVbgHkobP",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "style.use('ggplot')"
+      ],
+      "execution_count": 53,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "vEjd9NMRlph4",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Inserindo as predições"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "TazR1PQzkuay",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 337
+        },
+        "outputId": "90431830-0e9f-4135-f84d-873176e8fd2e"
+      },
+      "source": [
+        "df['Forecast']= np.nan\n",
+        "df.head()"
+      ],
+      "execution_count": 57,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/ipykernel_launcher.py:1: SettingWithCopyWarning: \n",
+            "A value is trying to be set on a copy of a slice from a DataFrame.\n",
+            "Try using .loc[row_indexer,col_indexer] = value instead\n",
+            "\n",
+            "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+            "  \"\"\"Entry point for launching an IPython kernel.\n"
+          ],
+          "name": "stderr"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>HL_PCT</th>\n",
+              "      <th>PCT_change</th>\n",
+              "      <th>Adj. Close</th>\n",
+              "      <th>Adj. Volume</th>\n",
+              "      <th>label</th>\n",
+              "      <th>Forecast</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Date</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2004-08-19</th>\n",
+              "      <td>8.072956</td>\n",
+              "      <td>0.324968</td>\n",
+              "      <td>50.322842</td>\n",
+              "      <td>44659000.0</td>\n",
+              "      <td>69.078238</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-20</th>\n",
+              "      <td>7.921706</td>\n",
+              "      <td>7.227007</td>\n",
+              "      <td>54.322689</td>\n",
+              "      <td>22834300.0</td>\n",
+              "      <td>67.839414</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-23</th>\n",
+              "      <td>4.049360</td>\n",
+              "      <td>-1.227880</td>\n",
+              "      <td>54.869377</td>\n",
+              "      <td>18256100.0</td>\n",
+              "      <td>68.912727</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-24</th>\n",
+              "      <td>7.657099</td>\n",
+              "      <td>-5.726357</td>\n",
+              "      <td>52.597363</td>\n",
+              "      <td>15247300.0</td>\n",
+              "      <td>70.668146</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-25</th>\n",
+              "      <td>3.886792</td>\n",
+              "      <td>1.183658</td>\n",
+              "      <td>53.164113</td>\n",
+              "      <td>9188600.0</td>\n",
+              "      <td>71.219849</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "              HL_PCT  PCT_change  Adj. Close  Adj. Volume      label  Forecast\n",
+              "Date                                                                          \n",
+              "2004-08-19  8.072956    0.324968   50.322842   44659000.0  69.078238       NaN\n",
+              "2004-08-20  7.921706    7.227007   54.322689   22834300.0  67.839414       NaN\n",
+              "2004-08-23  4.049360   -1.227880   54.869377   18256100.0  68.912727       NaN\n",
+              "2004-08-24  7.657099   -5.726357   52.597363   15247300.0  70.668146       NaN\n",
+              "2004-08-25  3.886792    1.183658   53.164113    9188600.0  71.219849       NaN"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 57
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "we-mSLK5kq2w",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "9701ce73-4857-47a8-e10e-6b29afc0cd22"
+      },
+      "source": [
+        "last_date = df.iloc[-1].name\n",
+        "last_date"
+      ],
+      "execution_count": 59,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "Timestamp('2018-02-05 00:00:00')"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 59
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "OdUmPpfomca-",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "3a03393d-098b-4c01-b635-0a037b65ddc2"
+      },
+      "source": [
+        "last_unix = last_date.timestamp()\n",
+        "last_unix"
+      ],
+      "execution_count": 60,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "1517788800.0"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 60
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "q2rTQDrinJ-B",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "next_unix= last_unix + 86400"
+      ],
+      "execution_count": 66,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "08kMwvm6EtzP",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "325f9902-6f4a-4475-9694-ac12b21887f9"
+      },
+      "source": [
+        "datetime.datetime.fromtimestamp(next_unix)"
+      ],
+      "execution_count": 67,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "datetime.datetime(2018, 2, 6, 0, 0)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 67
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sbSd7L2jwuAu",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 187
+        },
+        "outputId": "1574523e-48e0-4b3a-adc3-7c36a01efced"
+      },
+      "source": [
+        "for i in predicao_set:\n",
+        "    next_date = datetime.datetime.fromtimestamp(next_unix)\n",
+        "    next_unix += 86400\n",
+        "    df.loc[next_date] = [np.nan, np.nan, np.nan, np.nan, np.nan ] + [i]"
+      ],
+      "execution_count": 68,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "/usr/local/lib/python3.6/dist-packages/pandas/core/indexing.py:671: SettingWithCopyWarning: \n",
+            "A value is trying to be set on a copy of a slice from a DataFrame\n",
+            "\n",
+            "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+            "  self._setitem_with_indexer(indexer, value)\n",
+            "/usr/local/lib/python3.6/dist-packages/ipykernel_launcher.py:4: SettingWithCopyWarning: \n",
+            "A value is trying to be set on a copy of a slice from a DataFrame\n",
+            "\n",
+            "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
+            "  after removing the cwd from sys.path.\n"
+          ],
+          "name": "stderr"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "WZYEs5GoG3ei",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 450
+        },
+        "outputId": "fab94bdf-1c7c-4471-b84f-fde0870ae56b"
+      },
+      "source": [
+        "df"
+      ],
+      "execution_count": 69,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>HL_PCT</th>\n",
+              "      <th>PCT_change</th>\n",
+              "      <th>Adj. Close</th>\n",
+              "      <th>Adj. Volume</th>\n",
+              "      <th>label</th>\n",
+              "      <th>Forecast</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Date</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2004-08-19</th>\n",
+              "      <td>8.072956</td>\n",
+              "      <td>0.324968</td>\n",
+              "      <td>50.322842</td>\n",
+              "      <td>44659000.0</td>\n",
+              "      <td>69.078238</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-20</th>\n",
+              "      <td>7.921706</td>\n",
+              "      <td>7.227007</td>\n",
+              "      <td>54.322689</td>\n",
+              "      <td>22834300.0</td>\n",
+              "      <td>67.839414</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-23</th>\n",
+              "      <td>4.049360</td>\n",
+              "      <td>-1.227880</td>\n",
+              "      <td>54.869377</td>\n",
+              "      <td>18256100.0</td>\n",
+              "      <td>68.912727</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-24</th>\n",
+              "      <td>7.657099</td>\n",
+              "      <td>-5.726357</td>\n",
+              "      <td>52.597363</td>\n",
+              "      <td>15247300.0</td>\n",
+              "      <td>70.668146</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2004-08-25</th>\n",
+              "      <td>3.886792</td>\n",
+              "      <td>1.183658</td>\n",
+              "      <td>53.164113</td>\n",
+              "      <td>9188600.0</td>\n",
+              "      <td>71.219849</td>\n",
+              "      <td>NaN</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2018-03-08</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>1113.234981</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2018-03-09</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>1069.884395</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2018-03-10</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>1042.640874</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2018-03-11</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>1070.038345</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2018-03-12</th>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>NaN</td>\n",
+              "      <td>1019.789150</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>3424 rows × 6 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "              HL_PCT  PCT_change  ...      label     Forecast\n",
+              "Date                              ...                        \n",
+              "2004-08-19  8.072956    0.324968  ...  69.078238          NaN\n",
+              "2004-08-20  7.921706    7.227007  ...  67.839414          NaN\n",
+              "2004-08-23  4.049360   -1.227880  ...  68.912727          NaN\n",
+              "2004-08-24  7.657099   -5.726357  ...  70.668146          NaN\n",
+              "2004-08-25  3.886792    1.183658  ...  71.219849          NaN\n",
+              "...              ...         ...  ...        ...          ...\n",
+              "2018-03-08       NaN         NaN  ...        NaN  1113.234981\n",
+              "2018-03-09       NaN         NaN  ...        NaN  1069.884395\n",
+              "2018-03-10       NaN         NaN  ...        NaN  1042.640874\n",
+              "2018-03-11       NaN         NaN  ...        NaN  1070.038345\n",
+              "2018-03-12       NaN         NaN  ...        NaN  1019.789150\n",
+              "\n",
+              "[3424 rows x 6 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 69
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "H_EecpNhAI5k",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Plotando"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "NmWndvTNG6qK",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 289
+        },
+        "outputId": "84ca4168-f42a-4c1f-dee2-a68d03db076e"
+      },
+      "source": [
+        "df['Adj. Close'].plot()\n",
+        "df['Forecast'].plot()\n",
+        "plt.legend(loc=4)"
+      ],
+      "execution_count": 74,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<matplotlib.legend.Legend at 0x7f4c6aa4fd30>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 74
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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fnnRsR8DYI66tvAd0lIxH8ozIiesClQAFUKck61btzJu3DjS09Np3rw5U6ZMISwsjOHDh9O+fXvi4+O59tprufjii3nxxRdJSUkhIiKCadOmUb9+ffbt28e4ceNITEzEZrMxe/Zs6taty913383p06dxOp089dRTXHbZZaSmpnL//feTkJCAaZo8+uijnDhxgiNHjjBixAjCw8OZP3/+2YMupWqR9HVG4RORq4v6oX9fieoz2H2FD0DXXqhuvb0UnRDV03trj7LvZHq5HrNFeE3u7V6/2H3S09O59NJLAWjWrBlz5szhscce46WXXqJ3795MnjyZqVOn8n//938AZGVl8f3335OVlcX111/P3LlziYyMZOHChfznP/9h6tSpjBkzhoceeogrrriC9PR0tNYEBAQwZ84cateujcPh4Oqrr+Yf//gHP/30Ew0aNOCjjz4C4MyZM9SpU4d3332XL7/8ssJLzleLpE9ywWnO1I33oAZfg7r2VlS9huibRsGuLdZk3EXMSyuEqPzyd++cOXOG06dP07u3daE3YsQIj5o511xzDQB//vknu3bt4qabbgLANE3q1atHcnIyCQkJXHHFFe7jg/VlMWnSJH777TeUUhw5coTjx4/Ttm1b/u///o+JEycSExPjnovEW6pF0s95ilbd/hCqy0Wo0Dx1/Os1tLbVDIIuF/kiPCGqpbNdkfuLnLo2WmvatGnDokWLPLYnJycX9jK+/vprEhMT+f777wkICKBnz55kZGTQsmVLlixZwrJly3j11Ve55JJL3CXovaHKD9k0f/wWHf8zYFWC9Ej4Qohqr06dOoSGhvLbb78B8NVXX9GrV68C+7Vs2RKHw8HatWsB60p+165dhISE0LBhQ5YsWQJY0xempaWRlJREVFQUAQEBrFq1ikOHrGHgR44ccU+l+MADD7BlyxYAatWqVeQXSHmq0lf6OiUZ/fk7ABiPv4hq0cbHEQkh/NH06dPdN3KbNWvG1KlTC+wTGBjI7Nmzee655zhz5gwul4t7772X888/n5kzZ/L000/z2muvYbfbmT17NsOGDePOO+9k8ODBdO7c2T237c6dO3n55ZdRShEQEMC///1vwCrZfOutt1K/fv0KvZFbJUsra9PEfGg45JQpbdMB25P/roDoClfdy+d6i8TsHdW9tLK3SGnlskg+k5vwW7X3asIXQgh/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P/wwc+fOZdy4cfzwww/8/vvvALz44osAvP/++3z00Ue0adOG+Ph4FixYwBNPPMF7771H27ZtmTFjhi/fjhCAJH0hihUREUFycjIdOnSgWbNmGIZB8+bN6dOnj8fUePn98MMPXHfddTRp0gSbzcZ1113HX3/9xfHjx70YvRAFSfeOEMVwOByEhISwe/duPv30Uw4cOIDT6cTpdBY7D+7x48eZO3cuH374obtNa43D4ZAuHuFTkvSFKMKePXtwOBy0bduWyZMnc9lll/HMM88QGBjI+++/z5kzZ4DCa6dHRUUxbNgw+vbt6+2whSiWdO8IkU9qairr1q1jxowZ9O3bl2bNmpGWlkZISAiBgYHs2bOHX375xb1/nTp1UEpx9OhRd9ull15KbGwsBw8edB/z119/9fp7ESI/qbIpBJ7j9JVSNGnShL59+/KPf/wDwzBYs2YNH374IcnJybRv3566deuSkpLCI488AsC8efP43//+h8vlYvz48bRp04aVK1eycOFCTpw4QXBwMJ06dZLhn8LnJOkLIUQ1It07QghRjUjSF0KIakSSvhBCVCOS9IUQohqRpC+EENWIJH0hhKhGJOkLIUQ1IklfCCGqEUn6QghRjfw/7wvca4+xZU0AAAAASUVORK5CYII=\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "lhMS8EUJIe40",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": 72,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "47OvEBAtIgFR",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5tOQwfrxIl6E",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "U_aJ4yvCIoI1",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KqO7K2DKIqXl",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qdVURIVIIsg-",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}

@@ -1,0 +1,860 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Maratona de Dados Falqon.ipynb",
+      "provenance": [],
+      "collapsed_sections": [
+        "lVEQkpS87xYW",
+        "GAbgTkr-75lZ",
+        "az1pFWvwHU3k",
+        "o1v7p65X52yt",
+        "Ix7WlL7L6HN3",
+        "Cj6LuWXHiNx4",
+        "404tqJDHilKG"
+      ],
+      "toc_visible": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cNWFbGUa7qqv",
+        "colab_type": "text"
+      },
+      "source": [
+        "# **Maratona de Dados Falqon - Machine Learning**\n",
+        "\n",
+        "\n",
+        "---\n",
+        "\n",
+        "> ## *Forecasting Google*\n",
+        "\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "lVEQkpS87xYW",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dependências\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3virXL185feq",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GAbgTkr-75lZ",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Bibliotecas\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "lSi2Fm7UCNQz",
+        "colab_type": "text"
+      },
+      "source": [
+        "Math:\n",
+        ">https://docs.python.org/3/library/math.html\n",
+        "\n",
+        "NumPy:\n",
+        ">https://numpy.org/doc/stable/index.html\n",
+        "\n",
+        "Pandas:\n",
+        ">https://pandas.pydata.org/"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ATEb3mMj6nQZ",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "\n"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "az1pFWvwHU3k",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Tratando os Dados\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "R317h8C-8Crr",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dados utilizados\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "VDge1SWK5TSx",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Z1F8FI-n_po1",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 35
+        },
+        "outputId": "488590a8-bba2-4e27-f4be-aef067d0ceb3"
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "application/vnd.google.colaboratory.intrinsic": {
+              "type": "string"
+            },
+            "text/plain": [
+              "'Adj. Close'"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KjwCJ9ip_t39",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "DejlT7pC_qWV",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "J7l3RSNeATdB",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_68crOHXActs",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "zA0ML1HSBPG-",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "IP2i33kqGNg5",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "o1v7p65X52yt",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Treinamento"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "v7H16CJs-9lE",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dependências\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "e-lSwA4DAbjx",
+        "colab_type": "text"
+      },
+      "source": [
+        "A scikit-learn é uma biblioteca de ML para Python. Ela inclui vários algoritmos de classificação, regressão e agrupamento incluindo máquinas de vetores de suporte, florestas aleatórias, gradient boosting, k-means e DBSCAN, e é projetada para interagir com as bibliotecas NumPy e SciPy.\n",
+        "\n",
+        "\n",
+        "Model selection:\n",
+        "> https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html\n",
+        "\n",
+        "SVR:\n",
+        "> https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html\n",
+        "\n",
+        "Linear Regression:\n",
+        "\n",
+        "\n",
+        "> https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "jWD7F5kT-6QI",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "n0jo4sGCL61r",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Preparando pra testes e treinamento"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "I-qd3RP-gpL7",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "wwd5U91Ngx8j",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Ad9f7A5Jg6Cy",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "846OIkxBGP2R",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "WQcZNYP5MBUR",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Wah3kgSFMLRV",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "\n"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Gte6wQ9QQqf-",
+        "colab_type": "text"
+      },
+      "source": [
+        "## SVR"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "gq7a1hztOyDM",
+        "colab_type": "text"
+      },
+      "source": [
+        "Definimos o algoritmo"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "cgJDRIsUMSWN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7aWSXp2-O2YI",
+        "colab_type": "text"
+      },
+      "source": [
+        "Treinamos o mesmo"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "VOpDex9COJsb",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "11EJMRmQQtBx",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Linear Regression"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "DGPEHE0ZQ5cj",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mxELbhgtQ98M",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Ix7WlL7L6HN3",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Testando"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "XoAYsZjo7B5t",
+        "colab_type": "text"
+      },
+      "source": [
+        "## SVR"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mrIVOXR-O8zf",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "EL7WzBkh7GkS",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Linear Regression"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "vpOB3tkBQ448",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "4E7iAVZgP96h",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Cj6LuWXHiNx4",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Predict"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "bgD29ZKMiRRq",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "404tqJDHilKG",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Exibindo dados"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "aMlcqg-dlrg8",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Dependências"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "MT6AAFnoiwJe",
+        "colab_type": "text"
+      },
+      "source": [
+        "Matplotlib é uma biblioteca de plotagem para a linguagem de programação Python e sua extensão numérica de matemática NumPy\n",
+        "\n",
+        "\n",
+        "> https://matplotlib.org/api/_as_gen/matplotlib.pyplot.html?highlight=pyplot#module-matplotlib.pyplot\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "u0kEBxL2jNCS",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "HgG1A5H4ksDR",
+        "colab_type": "text"
+      },
+      "source": [
+        "Estilos de plotagem: \n",
+        "\n",
+        "> https://matplotlib.org/3.1.1/gallery/style_sheets/style_sheets_reference.html\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "kNbgVbgHkobP",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "vEjd9NMRlph4",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Inserindo as predições"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "TazR1PQzkuay",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "we-mSLK5kq2w",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "OdUmPpfomca-",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "q2rTQDrinJ-B",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "08kMwvm6EtzP",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sbSd7L2jwuAu",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "WZYEs5GoG3ei",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "H_EecpNhAI5k",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Plotando"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "NmWndvTNG6qK",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "lhMS8EUJIe40",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "47OvEBAtIgFR",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5tOQwfrxIl6E",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "U_aJ4yvCIoI1",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KqO7K2DKIqXl",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qdVURIVIIsg-",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
