@@ -1,4 +1,12 @@
+<p align="center">
+<img src="https://github.com/elladarte/Maratona_dados_Falqon/blob/master/logo.png">
+</p>
+
 # Maratona de Dados Falcqon
+ 
+<p align="center">
+<img src="https://img.shields.io/static/v1?label=Status&message=Concluido&color=green&style=for-the-badge"/>
+</p>
 
 ## Tecnologias Abordadas
 
